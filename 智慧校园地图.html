@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧校园电子地图</title>
+    <style>
+        html, body, #container {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .info-window-content {
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <script type="text/javascript">
+        window._AMapSecurityConfig = {
+            securityJsCode: "18ce272a553295593a12273ceafcec90",
+        };
+    </script>
+    <script src="https://webapi.amap.com/maps?v=2.0&key=c2d41093d0de2ff063d9decdd5a4fe46" type="text/javascript"></script>
+</head>
+<body>
+    <div id="container"></div>
+    <script>
+        var map = new AMap.Map("container", {
+            center: [102.755586, 25.057154],
+            zoom: 17,
+            viewMode: '2D',
+            pitch: 50,
+        });
+
+        AMap.plugin(['AMap.ToolBar', 'AMap.Scale', 'AMap.ControlBar', 'AMap.Geolocation', 
+        'AMap.HawkEye', 'AMap.MapType'], function () {
+            var toolbar = new AMap.ToolBar({
+                position: {
+                    right: '100px',
+                    top: '100px'
+                }
+            });
+            var scale = new AMap.Scale({
+                position: {
+                    bottom: '50px',
+                    right: '50px'
+                }
+            });
+            var controlbar = new AMap.ControlBar({
+                position: {
+                    bottom: '50px'
+                }
+            });
+            var geolocation = new AMap.Geolocation({
+                position: {
+                    left: '50px',
+                    top: '50px'
+                }
+            });
+            var hawkEye = new AMap.HawkEye({});
+            var mapType = new AMap.MapType({});
+            map.addControl(toolbar);
+            map.addControl(scale);
+            map.addControl(controlbar);
+            map.addControl(geolocation);
+            map.addControl(hawkEye);
+            map.addControl(mapType);
+        });
+
+        // 添加路线规划功能
+        AMap.plugin("AMap.Driving", function () {
+            var driving = new AMap.Driving({
+                map: map,
+                policy: 0, 
+            });
+            var startLngLat = [102.755586, 25.057154]; 
+            var endLngLat = [102.757761, 25.058853]; 
+            driving.search(startLngLat, endLngLat, function (status, result) {
+            });
+        });
+
+        // 添加拖拽路线功能
+        var path = [];
+        path.push([102.755975, 25.0618756]);
+        path.push([102.75902193, 25.06168565]);
+        path.push([102.75586399, 25.05728331]);
+
+        map.plugin("AMap.DragRoute", function() {
+            var route = new AMap.DragRoute(map, path, AMap.DrivingPolicy.LEAST_FEE); 
+            route.search(); 
+        });
+
+        // 定义校园重要地点
+        var locations = [
+            { name: '至真楼', position: [102.758754,25.060311], info: '这里是教学楼，主要进行课堂教学。' },
+            { name: '至善楼', position: [102.756856,25.061581], info: '这里是教学楼，主要进行课堂教学。' },
+            { name: '至信楼', position: [102.75585,25.05726], info: '这里是教学楼，主要进行课堂教学。' },
+            { name: '图书馆', position: [102.757939,25.061453], info: '这里是图书馆，提供丰富的图书资源。' },
+            { name: '图书馆', position: [102.75735,25.056955], info: '这里是图书馆，提供丰富的图书资源。' },
+            { name: '松苑餐厅', position: [102.758996,25.061765], info: '这里是食堂，提供美味的餐饮服务。' },
+            { name: '竹苑餐厅', position: [102.758169,25.0626], info: '这里是食堂，提供美味的餐饮服务。' },
+            { name: '第四食堂', position: [102.761772,25.058587], info: '这里是食堂，提供美味的餐饮服务。' },
+            { name: '樟苑餐厅', position: [102.752525,25.056146], info: '这里是食堂，提供美味的餐饮服务。' },
+            
+        ];
+
+        // 为每个地点添加文本标记和信息窗口
+        locations.forEach(function(location) {
+            var textMarker = new AMap.Text({
+                text: location.name,
+                position: location.position,
+                style: {
+                    color: 'red',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    padding: '5px',
+                    borderRadius: '5px',
+                    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)'
+                },
+                draggable: false,
+                cursor: 'pointer'
+            });
+
+            textMarker.setMap(map);
+
+            var infoWindow = new AMap.InfoWindow({
+                content: '<div class="info-window-content"><strong>' + location.name + '</strong><br>' + location.info + '</div>',
+                offset: new AMap.Pixel(0, -30)
+            });
+        });
+
+    
+    var path = [
+        [102.753716,25.056378],
+        [102.753547,25.056319],
+        [102.753486,25.056272],
+        [102.753463,25.056198],
+        [102.753468,25.056008],
+        [102.753423,25.055635],
+        [102.753376,25.055616],
+        [102.751591,25.055923],
+        [102.751473,25.056701],
+        [102.751348,25.056719],
+        [102.751391,25.056886],
+        [102.751131,25.057539],
+        [102.751739,25.057687],
+        [102.751722,25.057776],
+        [102.751962,25.057799],
+        [102.752313,25.057686],
+        [102.753129,25.058539],
+        [102.753329,25.058404],
+        [102.754454,25.058287],
+        [102.754719,25.058341],
+        [102.75732,25.058187],
+        [102.757419,25.058337],
+        [102.75716,25.058556],
+        [102.756783,25.058999],
+        [102.756457,25.059714],
+        [102.755932,25.060171],
+        [102.755932,25.060171],
+        [102.755127,25.061037],
+        [102.754904,25.061438],
+        [102.754871,25.061657],
+        [102.754891,25.061857],
+        [102.755049,25.062457],
+        [102.755195,25.062729],
+        [102.755476,25.063148],
+        [102.756247,25.063631],
+        [102.756764,25.063786],
+        [102.757171,25.063778],
+        [102.757806,25.063326],
+        [102.75896,25.062582],
+        [102.759578,25.06243],
+        [102.759681,25.06255],
+        [102.7597,25.062819],
+        [102.75981,25.062925],
+        [102.760674,25.063051],
+        [102.762419,25.064802],
+        [102.762652,25.064828],
+        [102.763208,25.064216],
+        [102.763976,25.0626],
+        [102.764119,25.061844],
+        [102.763993,25.059954],  
+        [102.764119,25.059181],
+        [102.765224,25.056989],
+        [102.765163,25.056878],
+        [102.762944,25.055597],
+        [102.761745,25.055286],
+        [102.761748,25.055295],
+        [102.761745,25.055445],
+        [102.759868,25.055839],
+        [102.75935,25.055692],
+        [102.75935,25.055692],
+        [102.759212,25.055709],
+        [102.758834,25.055867],
+        [102.758667,25.056074],
+        [102.75804,25.056197],
+        [102.757328,25.05586],
+        [102.757077,25.055822],
+        [102.756266,25.056264],
+        [102.755842,25.056376],
+        [102.7537,25.056622],
+        [102.753717,25.056379],
+        [102.75348,25.056253],
+
+
+
+    ];
+    var polygon = new AMap.Polygon({
+        map: map,
+        fillOpacity:0.4,
+        path: path
+    });
+    // 计算区域面积
+    var area = Math.round(AMap.GeometryUtil.ringArea(path));
+    var text = new AMap.Text({
+        position: new AMap.LngLat(102.762651,25.064823),
+        text: '区域面积' + area + '平方米',
+        offset: new AMap.Pixel(-20, -20)
+    })
+    map.add(text);
+    map.setFitView();
+    
+    </script>
+    
+</body>
+</html>
